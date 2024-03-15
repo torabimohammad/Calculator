@@ -1,5 +1,6 @@
 package com.example.calculator;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,10 +19,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        UpdateProgramBasedOnOrientation(getResources().getConfiguration());
         screen = findViewById(R.id.tv_result);
         input = new StringBuilder();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        UpdateProgramBasedOnOrientation(newConfig);
+    }
+
+
+    private void UpdateProgramBasedOnOrientation(Configuration configuration) {
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.acativity_main_landscape);
+        } else {
+            setContentView(R.layout.activity_main);
+        }
     }
 
     public void ButtonClick(View view) {
