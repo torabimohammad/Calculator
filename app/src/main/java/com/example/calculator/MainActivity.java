@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView screen;
     private StringBuilder input;
+    boolean previousResult = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,17 @@ public class MainActivity extends AppCompatActivity {
         UpdateProgramBasedOnOrientation(getResources().getConfiguration());
         screen = findViewById(R.id.tv_result);
         input = new StringBuilder();
+
+        if (savedInstanceState != null) {
+            input.append(savedInstanceState.getString("input", ""));
+            screen.setText(input.toString());
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("input", input.toString());
     }
 
     @Override
@@ -40,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ButtonClick(View view) {
+
         Button btn = (Button) view;
         String data = btn.getText().toString();
 
@@ -49,9 +62,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "=":
                 Solve();
+                previousResult = true;
+
                 break;
             default:
-                input.append(data);
+                if (input.length() > 0 || Character.isDigit((data.charAt(0)))) {
+                    input.append(data);
+                }
+
+
         }
 
         screen.setText(input.toString());
@@ -59,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void Solve() {
         String answer = input.toString();
+
+        if (answer.isEmpty()){
+            return;
+        }
 
         try {
             Stack<Double> stack = new Stack<>();
@@ -88,10 +111,8 @@ public class MainActivity extends AppCompatActivity {
                                 stack.push(stack.pop() / number);
                                 break;
                         }
-
                         currentNumber.setLength(0);
                     }
-
                     if (c == '+' || c == '-' || c == '*' || c == '/') {
                         lastOperator = c;
                     }
@@ -127,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
             // Display the result
             input.setLength(0);
             input.append(result);
+            screen.setText(input.toString());
         } catch (Exception e) {
             input.setLength(0);
             input.append("Error");
